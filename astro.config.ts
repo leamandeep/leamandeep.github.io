@@ -26,6 +26,7 @@ import svelte from '@astrojs/svelte';
 
 export default defineConfig({
   site: themeConfig.site.website,
+  output:"static",
   image: {
     service: {
       entrypoint: 'astro/assets/services/sharp',
@@ -47,7 +48,7 @@ export default defineConfig({
     ],
     rehypePlugins: [rehypeKatex, rehypeCleanup, rehypeImageProcessor, rehypeCopyCode]
   },
-  integrations: [mdx(), sitemap(), react(), markdoc(), keystatic(), svelte()],
+  integrations: [mdx(), sitemap(), react(), markdoc(), svelte(), ...(process.env.NODE_ENV !== "production" ? [keystatic()] : [])],
   vite: {
     server: {
       hmr: false,
