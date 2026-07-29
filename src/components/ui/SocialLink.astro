@@ -1,0 +1,103 @@
+---
+export interface SocialLink {
+  name: string;
+  href: string;
+  iconClass: string;
+  label?: string;
+}
+
+interface Props {
+  showLabels?: boolean;
+}
+
+const { showLabels = false } = Astro.props;
+
+const socialLinks: SocialLink[] = [
+  {
+    name: 'GitHub',
+    href: 'https://github.com/leamandeep',
+    iconClass: 'ph ph-github-logo',
+    label: 'GitHub',
+  },
+//   {
+//     name: 'X (Twitter)',
+//     href: 'https://x.com/yourusername',
+//     iconClass: 'ph ph-x-logo',
+//     label: 'Twitter',
+//   },
+  {
+    name: 'LinkedIn',
+    href: 'https://linkedin.com/in/leamandeep',
+    iconClass: 'ph ph-linkedin-logo',
+    label: 'LinkedIn',
+  },
+  {
+    name: 'Email',
+    href: 'mailto:deep.aman6174@gmail.com',
+    iconClass: 'ph ph-envelope-simple',
+    label: 'Email',
+  }
+ 
+];
+---
+
+<ul class="social-links">
+  {
+    socialLinks.map((social) => (
+      <li>
+        <a
+          href={social.href}
+          target={social.href.startsWith('http') ? '_blank' : '_self'}
+          rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+          aria-label={social.name}
+          class="social-link"
+        >
+          <i class={`social-icon ${social.iconClass}`} aria-hidden="true" />
+          {showLabels && <span class="social-label">{social.label || social.name}</span>}
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .social-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    background-color: transparent;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: color 0.15s ease-out, background-color 0.15s ease-out, border-color 0.15s ease-out;
+  }
+
+  .social-link:hover {
+    color: var(--text-primary);
+    background-color: var(--code-bg);
+    border-color: var(--border);
+    text-decoration: none;
+  }
+
+  .social-icon {
+    font-size: 1.25rem; /* ~20px size */
+    line-height: 1;
+  }
+
+  .social-label {
+    font-family: var(--sans);
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-bold);
+  }
+</style>
