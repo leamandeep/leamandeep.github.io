@@ -97,7 +97,7 @@ export default config({
                   multiline: true,
                 }),
               },
-
+              // @ts-ignore
               preview: (props) => (
                 <div
                   style={{
@@ -121,7 +121,7 @@ export default config({
                   label: 'LaTeX expression',
                 }),
               },
-
+// @ts-ignore
               preview: (props) => (
                 <code>
                   {props.fields.expression.value || 'Enter LaTeX…'}
