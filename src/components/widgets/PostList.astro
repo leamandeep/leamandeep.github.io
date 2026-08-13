@@ -29,6 +29,7 @@ const recentPost = sortedPosts.slice(0, 6);
             {themeConfig.date.dateOnRight && (
               <div class={themeConfig.general.postListDottedDivider ? 'dotted-divider' : 'divider'} />
             )}
+            
             {themeConfig.date.dateOnRight && (
               <p class="date font-features">
                 <FormattedDate date={post.data.publishDate} context="list" />

@@ -20,8 +20,9 @@
     color-scheme: dark;
   }
 </style>
-
+<!-- 
 <script is:inline>
+  console.log("initialized",window.ThemeManager.initialized)
   // Global Theme Manager
   ;(function () {
     // Prevent duplicate initialization
@@ -29,7 +30,7 @@
       return
     }
 
-    const systemThemeQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const systemThemeQuery = window.matchMedia('(prefers-color-scheme: light)')
 
     function getAppliedTheme() {
       return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
@@ -66,7 +67,8 @@
 
       getEffectiveTheme() {
         const stored = this.getStoredTheme()
-        return stored || this.getSystemTheme()
+        // Default to light theme instead of system preference when nothing is stored
+        return stored || 'light'
       },
 
       isUsingSystemTheme() {
@@ -149,4 +151,4 @@
     document.addEventListener('astro:after-swap', applyThemeAfterNavigation)
     document.addEventListener('astro:page-load', applyThemeAfterNavigation)
   })()
-</script>
+</script> -->

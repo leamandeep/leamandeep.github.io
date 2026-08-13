@@ -1,15 +1,18 @@
+
 ---
-import { type CollectionEntry, getCollection } from 'astro:content'
+import { type CollectionEntry, getCollection, render } from 'astro:content'
 import PostLayout from '@/layouts/PostLayout.astro'
-import { render } from 'astro:content'
+import InlineMath from '@/components/ui/InlineMath.astro'
+import Math from '@/components/ui/Math.astro'
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts')
+
   return posts
     .filter((post) => !post.id.startsWith('_'))
     .map((post) => ({
       params: { slug: post.id },
-      props: post
+      props: post,
     }))
 }
 
@@ -23,6 +26,11 @@ const toc = remarkPluginFrontmatter.toc || []
 const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
 ---
 
-<PostLayout {...post.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures}>
-  <Content />
+<PostLayout
+  {...post.data}
+  readingTime={readingTime}
+  toc={toc}
+  contentFeatures={contentFeatures}
+>
+  <Content components={{ Math, InlineMath }} />
 </PostLayout>

@@ -7,7 +7,7 @@ import katexCssUrl from 'katex/dist/katex.min.css?url'
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
-const { title, description, ogImage } = Astro.props as BaseHeadProps
+const { title, description, ogImage, keywords } = Astro.props as BaseHeadProps
 const imageUrl = ogImage ? new URL(ogImage, Astro.url) : new URL('/og/chiri-og.png', Astro.url)
 ---
 
@@ -33,7 +33,7 @@ const imageUrl = ogImage ? new URL(ogImage, Astro.url) : new URL('/og/chiri-og.p
 </title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
-
+<meta name="keywords" content={keywords} >
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={Astro.url} />

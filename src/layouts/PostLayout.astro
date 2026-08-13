@@ -19,7 +19,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 
 import { themeConfig } from '@/config'
 
-const { title, publishDate, readingTime, tags,  toc = [], contentFeatures = {} } = Astro.props as PostLayoutProps
+const { title, publishDate, readingTime, description ,tags,  toc = [], contentFeatures = {} } = Astro.props as PostLayoutProps
 
 const postSlug = Astro.url.pathname.split('/').filter(Boolean).pop() || ''
 const ogImage = `/open-graph/${postSlug}.png`
@@ -30,10 +30,11 @@ const shouldRenderImageViewer = themeConfig.post.imageViewer && contentFeatures.
 const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLinkCard
 ---
 
-<BaseLayout title={`${title} · ${themeConfig.site.title}`} description={themeConfig.site.description} type="post">
+<BaseLayout title={`${title} · ${themeConfig.site.title}`} description={description} type="post">
   <BaseHead
     title={`${title} · ${themeConfig.site.title}`}
-    description={themeConfig.site.description}
+    description={description}
+    keywords={tags.join()}
     ogImage={ogImage}
     slot="head"
   />

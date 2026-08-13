@@ -19,14 +19,13 @@ import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
 
 import keystatic from '@keystatic/astro'
-
+import { unified } from '@astrojs/markdown-remark'; // <-- new import
 
 import svelte from '@astrojs/svelte';
 
-
 export default defineConfig({
   site: themeConfig.site.website,
-  output:"static",
+  output: "static",
   image: {
     service: {
       entrypoint: 'astro/assets/services/sharp',
@@ -38,28 +37,25 @@ export default defineConfig({
       theme: 'css-variables',
       wrap: false
     },
-    remarkPlugins: [
-      remarkMath,
-      remarkDirective,
-      remarkEmbeddedMedia,
-      remarkContentFeatures,
-      remarkReadingTime,
-      remarkTOC
-    ],
-    rehypePlugins: [rehypeKatex, rehypeCleanup, rehypeImageProcessor, rehypeCopyCode]
+    processor: unified({
+      remarkPlugins: [
+        remarkMath,
+        remarkDirective,
+        remarkEmbeddedMedia,
+        remarkContentFeatures,
+        remarkReadingTime,
+        remarkTOC
+      ],
+      rehypePlugins: [rehypeKatex, rehypeCleanup, rehypeImageProcessor, rehypeCopyCode]
+    })
   },
   integrations: [mdx(), sitemap(), react(), markdoc(), svelte(), ...(process.env.NODE_ENV !== "production" ? [keystatic()] : [])],
   vite: {
-    server: {
-      hmr: false,
+    server: { hmr: false },
+    resolve: { alias: { '@': path.resolve('./src') } },
+     optimizeDeps: {
+      include: ['lodash', 'lodash/debounce'],
     },
-    resolve: {
-      alias: {
-        '@': path.resolve('./src')
-      }
-    }
   },
-  devToolbar: {
-    enabled: false
-  }
+  devToolbar: { enabled: false }
 })

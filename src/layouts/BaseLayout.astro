@@ -16,7 +16,7 @@ const shouldUseCustomWidth = widthValue > 25
 const finalWidth = shouldUseCustomWidth ? `${widthValue}rem` : '25rem'
 ---
 
-<html lang={language}>
+<html lang={language} class="light">
   <head>
     <ThemeManager />
     {fadeAnimation && <ClientRouter />}
