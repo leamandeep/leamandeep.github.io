@@ -19,7 +19,7 @@ export const { getStaticPaths, GET } = await OGImageRoute({
     title: page.title,
     description: themeConfig.site.title,
     logo: {
-      path: 'public/og/og-logo.png',
+      path: 'public/og/earth-africa-solid.png',
       size: [80, 80]
     },
     bgGradient: [[255, 255, 255]],

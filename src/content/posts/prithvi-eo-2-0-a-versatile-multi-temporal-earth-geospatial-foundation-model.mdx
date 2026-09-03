@@ -12,7 +12,7 @@ tags:
   - Prithvi E0 2.0
 publishDate: 2026-08-13
 ---
-## **Introduction**
+# Introduction
 
 *In* this blog, I will discuss the research paper **Prithvi-EO 2.0: A Versatile Multi-Temporal Earth Geospatial Foundation Model**. In recent years, a lot of geospatial foundation models have been introduced in EO, claiming to solve various EO problems. A foundation model is a general-purpose model that is trained on massive datasets and can be fine-tuned for many downstream tasks.
 
@@ -20,7 +20,7 @@ In this paper, the authors mention three limitations of available models. First,
 
 Second, most of the evaluations done on these models were not performed on diverse tasks, so clear comparisons were limited. Third, adapting GFMs for EO tasks is challenging and may require a certain level of AI expertise.
 
-## **The main idea**
+# Main Idea
 
 *In* Prithvi, the researchers used a ViT model. They replaced the 2D patch embedding and 2D positional encoding with 3D patch embedding and 1D positional encoding (sin/cosine encoding). The 3D input consists of (t), (h), and (w) dimensions. The 1D positional encoding is defined as:
 
@@ -40,7 +40,11 @@ Prithvi used a stratified and diversity-oriented sampling strategy to create a g
 
 For each selected location, they constructed **four-image temporal sequences**, with observations separated by approximately **1–6 months**, allowing the model to learn seasonal and temporal changes. These sequences were divided into **256 × 256 pixel patches**. Cloudy and poor-quality samples were filtered out, while spatial overrepresentation was controlled. This produced about **4.2 million training samples** and **45,568 validation samples**.
 
-## Limitation
+
+
+# Limitation
+
+
 
 The authors mentioned that as the number of timestamps increases, the computational complexity also increases. The attention mechanism used in Prithvi has quadratic complexity by nature.
 

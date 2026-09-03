@@ -3,14 +3,25 @@ import FormattedDate from '@/components/widgets/FormattedDate.astro'
 import type { PostListProps } from '@/types'
 import { themeConfig } from '@/config'
 
-const { posts } = Astro.props as PostListProps
-const sortedPosts = [...posts].sort(
+const { posts } = Astro.props as PostListProps;
+
+const cleanPosts = posts.map((post) => ({
+  ...post,
+  cleanDescription: post.body
+        ?.replace(/^#+.*$/gm, '')    // Remove complete heading lines (# Title)
+        .replace(/[*_~`]/g, '')      // Remove markdown styling (*, _, ~, `)
+        .replace(/\s+/g, ' ')        // Normalize multi-line spaces/newlines
+        .trim()
+        .slice(0, 200) + '...'
+}));
+
+const sortedPosts = [...cleanPosts].sort(
   (a, b) =>
     new Date(b.data.publishDate).getTime() -
     new Date(a.data.publishDate).getTime()
 );
-const recentPost = sortedPosts.slice(0, 6);
 
+const recentPost = sortedPosts.slice(0, 6);
 
 ---
 
@@ -38,7 +49,7 @@ const recentPost = sortedPosts.slice(0, 6);
 
             
           </div>
-          <p class="post-description" >{post.body?.slice(0, 200)}...</p>
+          <p class="post-description" >{post.cleanDescription?.slice(0, 200)}...</p>
         </a>
       </li>
     ))
