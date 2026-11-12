@@ -28,11 +28,13 @@ Second, most of the evaluations done on these models were not performed on diver
 
 <InlineMath expression="PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}}\right)" />
 
-![Sin cos embedding in spatio temporal dataset](../../assets/images/posts/prithvi-eo-2-0-a-versatile-multi-temporal-earth-geospatial-foundation-model/Untitled-2026-03-20-patch.svg)
+![Sin cos embedding in spatio temporal dataset](../../assets/images/posts/prithvi-eo-2-0-a-versatile-multi-temporal-earth-geospatial-foundation-model/image.svg)
+![](../../assets/images/posts/prithvi-eo-2-0-a-versatile-multi-temporal-earth-geospatial-foundation-model/image-dark.svg "dark")
 
 They also encoded metadata such as latitude, longitude, and the day of the year, and added it to the embedding token using a weighted sum of learned weights. Since latitude, longitude, and day-of-the-year information can be missing from the data, the authors simulate such situations by randomly dropping either temporal or geolocation information while masking image patches. Attention is applied across both spatial and temporal dimensions. So, it is able to handle both modalities at different scales.&#x20;
 
-![Prithvi E0 2.0 architecture ](../../assets/images/posts/prithvi-eo-2-0-a-versatile-multi-temporal-earth-geospatial-foundation-model/Untitled-2026-03-20-1655.svg)
+![Prithvi E0 2.0 architecture ](../../assets/images/posts/prithvi-eo-2-0-a-versatile-multi-temporal-earth-geospatial-foundation-model/image_2.svg)
+![](../../assets/images/posts/prithvi-eo-2-0-a-versatile-multi-temporal-earth-geospatial-foundation-model/image_2-dark.svg "dark")
 
 Prithvi was scaled to 600M parameters, placing it among the largest models for EO tasks. MAE is used for pretraining. Prithvi was trained on a 4.2 million global time-series dataset.
 

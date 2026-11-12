@@ -4,7 +4,7 @@ export const themeConfig: ThemeConfig = {
   // SITE INFO ///////////////////////////////////////////////////////////////////////////////////////////
   site: {
     website: 'https://leamandeep.github.io/', // Site domain
-    title: 'Aman Deep', // Site title
+    title: 'Aman', // Site title
     author: 'Aman Deep', // Author name
     description: 'Bridging machine learning and Earth observation. I build AI systems that analyze satellite imagery and geospatial data to uncover environmental insights, track climate trends, and support sustainable development.', // Site description
     language: 'en-US' // Default language
@@ -12,9 +12,9 @@ export const themeConfig: ThemeConfig = {
 
   // GENERAL SETTINGS ////////////////////////////////////////////////////////////////////////////////////
   general: {
-    contentWidth: '40rem', // Content area width
+    contentWidth: '42rem', // Content area width
     centeredLayout: true, // Use centered layout (false for left-aligned)
-    themeToggle: false, // Show theme toggle button (uses system theme by default)
+    themeToggle: true, // Show theme toggle button (uses system theme by default)
     postListDottedDivider: false, // Show dotted divider in post list
     footer: true, // Show footer
     fadeAnimation: true // Enable fade animations

@@ -1,0 +1,42 @@
+---
+import { themeConfig } from '@/config'
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import { getSortedFilteredPosts } from '@/utils/draft'
+import PostList from '@/components/widgets/PostList.astro'
+
+const posts = await getSortedFilteredPosts()
+const readingPosts = posts.filter((post) => post.data.logType === 'reading')
+---
+
+<IndexLayout
+  title={`Writing · ${themeConfig.site.title}`}
+  description={`Essays and notes by ${themeConfig.site.author} on computer vision, remote sensing and geospatial data science.`}
+>
+  <main>
+    <h1 class="page-heading">
+      writing <span class="count">{readingPosts.length}</span>
+    </h1>
+    <PostList posts={readingPosts} meta="day" groupByMonth stagger />
+  </main>
+</IndexLayout>
+
+<style>
+  /* The page heading is the biggest thing on the page — bigger than the site title */
+  .page-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin: 0 0 2rem;
+  }
+
+  .count {
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-regular);
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

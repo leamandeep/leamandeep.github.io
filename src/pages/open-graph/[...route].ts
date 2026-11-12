@@ -33,15 +33,15 @@ export const { getStaticPaths, GET } = await OGImageRoute({
         color: [28, 28, 28],
         size: 68,
         weight: 'Bold',
-        families: ['Inter Variable', 'Noto Sans SC']
+        families: ['Geist', 'Noto Sans SC']
       },
       description: {
         color: [180, 180, 180],
         size: 40,
         weight: 'Normal',
-        families: ['Inter Variable', 'Noto Sans SC']
+        families: ['Geist', 'Noto Sans SC']
       }
     },
-    fonts: ['public/fonts/Inter.woff2', 'public/fonts/NotoSansSC-Regular.otf', 'public/fonts/NotoSansSC-Bold.otf']
+    fonts: ['public/fonts/Geist-Variable.woff2', 'public/fonts/NotoSansSC-Regular.otf', 'public/fonts/NotoSansSC-Bold.otf']
   })
 })

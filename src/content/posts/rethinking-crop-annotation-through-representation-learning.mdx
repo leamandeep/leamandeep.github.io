@@ -39,13 +39,15 @@ Another challenge is missing satellite observations, particularly in optical ima
 
 The goal of this experiment was not simply to build another crop classification model. I wanted to explore whether we could make crop annotation more adaptable by combining learned satellite representations with human feedback, reducing the amount of manual labeling required while allowing the model to improve over time.
 
-![Continuous multi-temporal profile of a single pixel over a 12-month period with fitted phenology curve.](../../assets/images/posts/rethinking-crop-annotation-through-representation-learning/image-2.png)
+![Monthly observation pattern across the growing season](../../assets/images/posts/rethinking-crop-annotation-through-representation-learning/image.svg)
+![](../../assets/images/posts/rethinking-crop-annotation-through-representation-learning/image-dark.svg "dark")
 
-![Satellite pixel time series highlighting temporal gaps and cloud-masked observations (dark bars) disrupting the continuous profile.](../../assets/images/posts/rethinking-crop-annotation-through-representation-learning/image.png)
+![Observation timeline with human-in-the-loop refinement](../../assets/images/posts/rethinking-crop-annotation-through-representation-learning/image_2.svg)
+![](../../assets/images/posts/rethinking-crop-annotation-through-representation-learning/image_2-dark.svg "dark")
 
 # Current Limitation
 
-Although the framework has shown promising results, there are still a few limitations that need to be addressed.
+*A*lthough the framework has shown promising results, there are still a few limitations that need to be addressed.
 
 * **Lack of multimodal support:** Currently, the model does not support multiple satellite data sources together. Combining optical imagery from Sentinel-2 with SAR observations from Sentinel-1 could help the model better understand crop characteristics, especially under cloudy conditions.
 * **Seasonal crop confusion:** Crops such as winter paddy and monsoon paddy need to be handled carefully. Although they belong to the same crop category, their growing seasons and temporal patterns differ. Without properly accounting for these differences, the model may struggle to distinguish them or group them incorrectly.

@@ -1,14 +1,15 @@
 <!--
-  This is a critical style block to prevent flashing on page load in dark mode.
-  It is injected into the <head> of the document before the main stylesheets are loaded.
+  Critical style block to prevent flashing on page load in dark mode.
+  Injected into the <head> before the main stylesheets, plus the inline
+  script that applies the stored/system theme before first paint.
 -->
 <style is:inline>
   :root {
-    --bg: #ffffff;
+    --bg: #f6f6f4;
   }
 
   html.dark {
-    --bg: #1c1c1c;
+    --bg: #1b1b1b;
   }
 
   html {
@@ -20,135 +21,62 @@
     color-scheme: dark;
   }
 </style>
-<!-- 
 <script is:inline>
-  console.log("initialized",window.ThemeManager.initialized)
-  // Global Theme Manager
   ;(function () {
-    // Prevent duplicate initialization
-    if (window.ThemeManager && window.ThemeManager.initialized) {
-      return
+    const STORAGE_KEY = 'chiri-theme'
+    const root = document.documentElement
+    const darkQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+    const getStoredTheme = () => {
+      try {
+        return localStorage.getItem(STORAGE_KEY)
+      } catch {
+        return null
+      }
     }
 
-    const systemThemeQuery = window.matchMedia('(prefers-color-scheme: light)')
+    const getSystemTheme = () => (darkQuery.matches ? 'dark' : 'light')
 
-    function getAppliedTheme() {
-      return document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+    const getEffectiveTheme = () => getStoredTheme() || getSystemTheme()
+
+    function applyTheme(theme) {
+      root.classList.remove('light', 'dark')
+      root.classList.add(theme)
+
+      document.dispatchEvent(
+        new CustomEvent('themechange', {
+          detail: { theme, isUserChoice: getStoredTheme() !== null }
+        })
+      )
     }
 
     window.ThemeManager = {
-      STORAGE_KEY: 'chiri-theme',
-      initialized: false,
+      STORAGE_KEY,
 
-      getSystemTheme() {
-        return systemThemeQuery.matches ? 'dark' : 'light'
-      },
-
-      getStoredTheme() {
+      toggle() {
+        const next = root.classList.contains('dark') ? 'light' : 'dark'
         try {
-          return localStorage.getItem(this.STORAGE_KEY)
-        } catch {
-          return null
-        }
-      },
-
-      setStoredTheme(theme) {
-        try {
-          if (theme === 'system') {
-            // Reserved API: clearing storage makes the current system theme effective again.
-            localStorage.removeItem(this.STORAGE_KEY)
-          } else {
-            localStorage.setItem(this.STORAGE_KEY, theme)
-          }
+          localStorage.setItem(STORAGE_KEY, next)
         } catch (e) {
           console.warn('Failed to store theme preference:', e)
         }
+        applyTheme(next)
       },
 
-      getEffectiveTheme() {
-        const stored = this.getStoredTheme()
-        // Default to light theme instead of system preference when nothing is stored
-        return stored || 'light'
-      },
-
-      isUsingSystemTheme() {
-        return this.getStoredTheme() === null
-      },
-
-      applyTheme(theme) {
-        document.documentElement.classList.remove('light', 'dark')
-        document.documentElement.classList.add(theme)
-
-        const isSystemTheme = this.isUsingSystemTheme()
-
-        // Dispatch event for other components
-        document.dispatchEvent(
-          new CustomEvent('themechange', {
-            detail: {
-              theme,
-              isUserChoice: !isSystemTheme,
-              isSystemTheme
-            }
-          })
-        )
-      },
-
-      toggle() {
-        const currentTheme = this.getEffectiveTheme()
-        // Simply toggle between light and dark
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
-
-        this.setStoredTheme(newTheme)
-        this.applyTheme(newTheme)
-      },
-
-      init() {
-        if (this.initialized) return
-
-        // Set initial theme (maintain current theme when refreshing page)
-        this.applyTheme(this.getEffectiveTheme())
-
-        systemThemeQuery.addEventListener('change', (e) => {
-          const newSystemTheme = e.matches ? 'dark' : 'light'
-
-          // Current product behavior: system theme changes always become the stored theme.
-          this.setStoredTheme(newSystemTheme)
-          this.applyTheme(newSystemTheme)
-        })
-
-        this.initialized = true
-      }
+      getEffectiveTheme
     }
 
-    // Initialize theme manager
-    window.ThemeManager.init()
+    // Apply before first paint (script is in <head>, runs synchronously)
+    applyTheme(getEffectiveTheme())
 
-    const applyTheme = () => {
-      if (window.ThemeManager) {
-        const theme = window.ThemeManager.getEffectiveTheme()
-        window.ThemeManager.applyTheme(theme)
-      }
-    }
+    // Follow system changes unless the user made an explicit choice
+    darkQuery.addEventListener('change', () => {
+      if (!getStoredTheme()) applyTheme(getSystemTheme())
+    })
 
-    // Listen for navigation events
-    document.addEventListener('astro:before-preparation', applyTheme)
-
-    // Apply theme after DOM changes (both swap and page load)
-    const applyThemeAfterNavigation = () => {
-      if (window.ThemeManager) {
-        const currentTheme = window.ThemeManager.getEffectiveTheme()
-        const appliedTheme = getAppliedTheme()
-
-        if (currentTheme !== appliedTheme) {
-          // Use requestAnimationFrame to ensure theme is applied in the next frame, avoiding conflicts with view transition
-          requestAnimationFrame(() => {
-            window.ThemeManager.applyTheme(currentTheme)
-          })
-        }
-      }
-    }
-
-    document.addEventListener('astro:after-swap', applyThemeAfterNavigation)
-    document.addEventListener('astro:page-load', applyThemeAfterNavigation)
+    // Re-apply after client-side navigation (the swapped document carries the build-time class)
+    const reapply = () => requestAnimationFrame(() => applyTheme(getEffectiveTheme()))
+    document.addEventListener('astro:after-swap', reapply)
+    document.addEventListener('astro:page-load', reapply)
   })()
-</script> -->
+</script>

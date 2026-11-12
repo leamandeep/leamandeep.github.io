@@ -1,169 +1,205 @@
 ---
-import FormattedDate from '@/components/widgets/FormattedDate.astro'
-import type { PostListProps } from '@/types'
-import { themeConfig } from '@/config'
+import type { CollectionEntry } from 'astro:content'
+import { formatDate } from '@/utils/date'
 
-const { posts } = Astro.props as PostListProps;
+interface Props {
+  posts: CollectionEntry<'posts'>[]
+  /** 'day' shows just the day number (month comes from the group heading); 'date' shows the full date */
+  meta?: 'date' | 'day'
+  /** Group rows under month headings, like navthings.github.io */
+  groupByMonth?: boolean
+  /** Staggered fade-in of rows on page load (archive pages) */
+  stagger?: boolean
+}
 
-const cleanPosts = posts.map((post) => ({
-  ...post,
-  cleanDescription: post.body
-        ?.replace(/^#+.*$/gm, '')    // Remove complete heading lines (# Title)
-        .replace(/[*_~`]/g, '')      // Remove markdown styling (*, _, ~, `)
-        .replace(/\s+/g, ' ')        // Normalize multi-line spaces/newlines
-        .trim()
-        .slice(0, 200) + '...'
-}));
+const { posts, meta = 'date', groupByMonth = false, stagger = false } = Astro.props as Props
 
-const sortedPosts = [...cleanPosts].sort(
-  (a, b) =>
-    new Date(b.data.publishDate).getTime() -
-    new Date(a.data.publishDate).getTime()
-);
+let rowIndex = 0
 
-const recentPost = sortedPosts.slice(0, 6);
+const MONTHS = [
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december'
+]
 
+const sorted = [...posts].sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+
+type Group = { label: string; posts: CollectionEntry<'posts'>[] }
+
+const groups: Group[] = []
+if (groupByMonth) {
+  const byMonth = new Map<string, Group>()
+  for (const post of sorted) {
+    const date = post.data.publishDate
+    const key = `${date.getFullYear()}-${date.getMonth()}`
+    let group = byMonth.get(key)
+    if (!group) {
+      group = { label: MONTHS[date.getMonth()], posts: [] }
+      byMonth.set(key, group)
+      groups.push(group)
+    }
+    group.posts.push(post)
+  }
+} else {
+  groups.push({ label: '', posts: sorted })
+}
+
+function metaText(post: CollectionEntry<'posts'>): string {
+  const date = post.data.publishDate
+  return meta === 'day' ? String(date.getDate()).padStart(2, '0') : formatDate(date)
+}
 ---
 
-<ul>
+<div class="post-log">
   {
-    recentPost.map((post) => (
-      <li>
-        <a href={`/${post.id}/`}>
-          <div class={`post-item ${!themeConfig.date.dateOnRight ? 'date-left' : ''}`}>
-            {!themeConfig.date.dateOnRight && (
-              <p class="date font-features">
-                <FormattedDate date={post.data.publishDate} context="list" />
-              </p>
-            )}
-            <p class="title">{post.data.title}</p>
-            {themeConfig.date.dateOnRight && (
-              <div class={themeConfig.general.postListDottedDivider ? 'dotted-divider' : 'divider'} />
-            )}
-            
-            {themeConfig.date.dateOnRight && (
-              <p class="date font-features">
-                <FormattedDate date={post.data.publishDate} context="list" />
-              </p>
-            )}
-
-            
-          </div>
-          <p class="post-description" >{post.cleanDescription?.slice(0, 200)}...</p>
-        </a>
-      </li>
+    groups.map((group) => (
+      <div class="group">
+        {group.label && <h3 class="group-heading">{group.label}</h3>}
+        <ul>
+          {group.posts.map((post) => (
+            <li class={stagger ? 'row-in' : undefined} style={stagger ? `--i: ${rowIndex++}` : undefined}>
+              <a href={`/${post.id}/`}>
+                <span class="title">{post.data.title}</span>
+                <time class="meta" datetime={post.data.publishDate.toISOString().slice(0, 10)}>
+                  {metaText(post)}
+                </time>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     ))
   }
-</ul>
-<div class="placeholder"></div>
+</div>
 
 <style>
+  .post-log {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .group-heading {
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-regular);
+    color: var(--text-secondary);
+    margin: 0 0 0.5rem;
+  }
+
   ul {
     padding: 0;
     margin: 0;
-    list-style-type: none;
+    list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0;
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
   }
 
   a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2.5rem;
+    align-items: center;
+    column-gap: 1rem;
+    min-height: 3rem;
     color: var(--text-primary);
-    display: block;
     text-decoration: none;
     transition: opacity 0.15s ease-out;
   }
 
+  .title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .meta {
+    width: 2.5rem;
+    text-align: right;
+    font-size: var(--font-size-s);
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    margin: 0;
+  }
   @media (hover: hover) and (pointer: fine) {
-    ul:hover a {
+    .post-log:hover a {
       opacity: 0.4;
     }
 
-    ul:hover a:hover {
-      opacity: 1;
-    }
-
-    ul:hover a:hover .divider {
-      background-color: var(--text-tertiary);
-      opacity: 0.75;
-    }
-    ul:hover a:hover .dotted-divider {
-      color: var(--text-secondary);
-    }
-    ul:hover a:hover .date {
-      color: var(--text-secondary);
+    .post-log:hover a:hover {
       opacity: 1;
     }
   }
 
-  .post-item {
-    height: 2.75rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
+  .row-in {
+    animation: row-in 0.35s ease-out backwards;
+    animation-delay: calc(var(--i, 0) * 45ms);
   }
 
-  .post-item.date-left {
-    justify-content: flex-start;
-  }
+  @media (hover: hover) and (pointer: fine) {
+    .post-log:hover a {
+      opacity: 0.4;
+    }
 
-  .post-item.date-left .title {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
+    .post-log:hover a:hover {
+      opacity: 1;
+    }
 
-  .post-item.date-left .date {
-    margin-right: 0.75rem;
-  }
-  .post-description{
-    font-size: 0.8rem;
+    .post-log:hover a:hover .title {
+      transform: translateX(3px);
+    }
+
+    .post-log:hover a:hover .meta {
+      color: var(--text-secondary);
+      opacity: 1;
+    }
   }
 
   .title {
     margin: 0;
-    flex-shrink: 1;
+    flex: 1 1 auto;
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 0.9375rem;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .date {
+  .meta {
+    font-size: var(--font-size-s);
     margin: 0;
     color: var(--text-secondary);
     opacity: 0.75;
-    letter-spacing: var(--spacing-s);
     flex-shrink: 0;
     white-space: nowrap;
+    letter-spacing: var(--spacing-s);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
   }
 
-  .divider {
-    flex: 1 1 auto;
-    min-width: 3rem;
-    margin: 0 0.25rem;
-    height: 0.5px;
-    background-color: var(--border);
-  }
-
-  .dotted-divider {
-    flex: 1 1 3rem;
-    min-width: 3rem;
-    max-width: 100%;
-    text-align: end;
-    letter-spacing: 5px;
-    height: 1.675rem;
-    overflow: hidden;
-    color: var(--text-tertiary);
-    opacity: 0.75;
-  }
-
-  .dotted-divider::after {
-    content: '·····························································································································································';
-    pointer-events: none;
-  }
-
-  .placeholder {
-    height: 3rem;
+  @keyframes row-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 </style>

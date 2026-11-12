@@ -73,13 +73,40 @@ export default function rehypeImageProcessor() {
       }
 
       const newNodes = []
+      const attached = new Set()
+
+      // Pull the dark-variant sibling (rehype-dark-images) into the same figure,
+      // so light and dark share one caption below the image.
+      const findAttachedDark = (imgNode) => {
+        const idx = node.children.indexOf(imgNode)
+        for (let j = idx + 1; j < node.children.length; j++) {
+          const sib = node.children[j]
+          if (sib.type === 'text' && !sib.value.trim()) {
+            continue
+          }
+          if (sib.type === 'element' && sib.tagName === 'img' && sib.properties?.['data-theme-image'] === 'dark') {
+            return sib
+          }
+          return null
+        }
+        return null
+      }
 
       for (const imgNode of imgNodes) {
+        if (attached.has(imgNode)) {
+          continue
+        }
+
         const alt = imgNode.properties?.alt?.trim()
 
         if (!alt || alt.includes('_')) {
           newNodes.push(imgNode)
           continue
+        }
+
+        const darkNode = findAttachedDark(imgNode)
+        if (darkNode) {
+          attached.add(darkNode)
         }
 
         const figure = {
@@ -90,6 +117,7 @@ export default function rehypeImageProcessor() {
           },
           children: [
             imgNode,
+            ...(darkNode ? [darkNode] : []),
             {
               type: 'element',
               tagName: 'figcaption',

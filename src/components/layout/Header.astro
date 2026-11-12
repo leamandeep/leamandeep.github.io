@@ -1,65 +1,36 @@
 ---
 import { themeConfig } from '@/config'
 import ThemeToggle from '@/components/ui/ThemeToggle.astro'
-
-const pathname = Astro.url.pathname;
-
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/posts", label: "Posts" },
- 
-];
-
-
 ---
 
 <header>
   <nav>
-    <h1>{themeConfig.site.title}</h1>
-   
+    <a class="site-title" href="/" aria-label={`${themeConfig.site.title} — home`}>
+      <h1>{themeConfig.site.title}</h1>
+    </a>
 
-    <div class="menu">
-        {
-    links.map(link => (
-      <a
-        href={link.href}
-        class={pathname === link.href ? "active" : ""}
-      >
-        {link.label}
-      </a>
-    ))
-  }
-    </div>
-
-     {themeConfig.general.themeToggle && <ThemeToggle />}
+    {themeConfig.general.themeToggle && <ThemeToggle />}
   </nav>
 </header>
 <style>
   header {
     margin: 0;
   }
-  nav{
+
+  nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
-  .active{
-      text-decoration: underline !important;
+  .site-title {
+    text-decoration: none;
   }
 
-  .menu{
-    display: flex;
-
-  }
-  .menu > a{
-    padding: 0px 5px;
-  }
-  header a {
+  .site-title h1 {
+    margin: 0;
+    font-size: inherit;
     font-weight: var(--font-weight-bold);
     color: var(--text-primary);
-    text-decoration: none;
-    min-width: 3rem;
-    display: inline-block;
   }
 </style>

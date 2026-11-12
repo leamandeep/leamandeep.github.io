@@ -10,6 +10,7 @@ import remarkReadingTime from './src/plugins/remark-reading-time.mjs'
 import rehypeCleanup from './src/plugins/rehype-cleanup.mjs'
 import rehypeImageProcessor from './src/plugins/rehype-image-processor.mjs'
 import rehypeCopyCode from './src/plugins/rehype-copy-code.mjs'
+import rehypeDarkImages from './src/plugins/rehype-dark-images.mjs'
 import remarkTOC from './src/plugins/remark-toc.mjs'
 import { themeConfig } from './src/config'
 import { imageConfig } from './src/utils/image-config'
@@ -46,7 +47,7 @@ export default defineConfig({
         remarkReadingTime,
         remarkTOC
       ],
-      rehypePlugins: [rehypeKatex, rehypeCleanup, rehypeImageProcessor, rehypeCopyCode]
+      rehypePlugins: [rehypeKatex, rehypeCleanup, rehypeDarkImages, rehypeImageProcessor, rehypeCopyCode]
     })
   },
   integrations: [mdx(), sitemap(), react(), markdoc(), svelte(), ...(process.env.NODE_ENV !== "production" ? [keystatic()] : [])],
