@@ -18,21 +18,29 @@ import CopyCode from '@/components/ui/CopyCode.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 
 import { themeConfig } from '@/config'
-import { blogPostingJsonLd } from '@/utils/seo'
+import { blogPostingJsonLd, breadcrumbJsonLd, tagSlug } from '@/utils/seo'
 
 const { title, publishDate, updatedDate, readingTime, description ,tags,  toc = [], contentFeatures = {} } = Astro.props as PostLayoutProps
 
 const postSlug = Astro.url.pathname.split('/').filter(Boolean).pop() || ''
 const ogImage = `/open-graph/${postSlug}.png`
-const jsonLd = blogPostingJsonLd({
-  title,
-  description,
-  publishDate,
-  updatedDate,
-  tags,
-  url: new URL(Astro.url.pathname, Astro.site),
-  image: new URL(ogImage, Astro.site).toString()
-})
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+const jsonLd = [
+  blogPostingJsonLd({
+    title,
+    description,
+    publishDate,
+    updatedDate,
+    tags,
+    url: canonicalURL,
+    image: new URL(ogImage, Astro.site).toString()
+  }),
+  breadcrumbJsonLd([
+    { name: themeConfig.site.title, url: new URL('/', Astro.site) },
+    { name: 'Writing', url: new URL('/writing/', Astro.site) },
+    { name: title, url: canonicalURL }
+  ])
+]
 const shouldRenderToc = themeConfig.post.toc && toc.length > 0
 const shouldRenderCopyCode = themeConfig.post.copyCode && contentFeatures.hasCodeBlock
 const shouldRenderImageOptimizer = contentFeatures.hasContentImage
@@ -78,7 +86,7 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
       
         <div class="prose tags-container">
     {tags.map((tag)=>(
-  <span  class="tag">#{tag}</span>
+  <a class="tag" href={`/tags/${tagSlug(tag)}/`}>#{tag}</a>
   
 ))}
 </div>

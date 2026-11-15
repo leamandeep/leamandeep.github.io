@@ -37,7 +37,13 @@ The text encoder embeds $N$ potential labels into a continuous vector space $R^C
 Similar to the text encoder, the image encoder generates a dense embedding vector for every pixel. The authors use Dense Prediction Transformers (DPT) for this component. Given an image of size $H \times W$ and a downsampling factor $s$ <InlineMath expression="\tilde{H} =  \frac{H}{s},   \tilde{W} =  \frac{W}{s}" />\
 &#x20;the model outputs dense feature embeddings of shape   <InlineMath expression="I \in R^{\tilde{H} \times \tilde{W} \times C}" />
 
-![Lseg's architecture](../../assets/images/posts/language-meets-remote-sensing-applying-vlm-to-land-cover-segmentation/image.svg)
+
+
+
+
+![](../../assets/images/posts/language-meets-remote-sensing-applying-vlm-to-land-cover-segmentation/Untitled-2026-03-20-1657.svg)
+
+
 ![Lseg's architecture](../../assets/images/posts/language-meets-remote-sensing-applying-vlm-to-land-cover-segmentation/image-dark.svg "dark")
 
 #### **Word-Pixel Correlation Tensor:**
@@ -98,7 +104,7 @@ Unlike standard zero-shot setups, my objective was supervised remote sensing seg
 
 ### Key Improvements Made
 
-![Pre-mean-centering similarity matrix for prompt vocabulary vs dataset classes](../../assets/images/posts/language-meets-remote-sensing-applying-vlm-to-land-cover-segmentation/image.svg)
+![Pre-mean-centering similarity matrix for prompt vocabulary vs dataset classes](../../assets/images/posts/language-meets-remote-sensing-applying-vlm-to-land-cover-segmentation/image_2.svg)
 ![](../../assets/images/posts/language-meets-remote-sensing-applying-vlm-to-land-cover-segmentation/image_2-dark.svg "dark")
 
 **Heatmap matrix showing pre-mean-centering cosine similarity scores between fixed dataset target classes (x-axis) and prompt vocabulary terms (y-axis).**

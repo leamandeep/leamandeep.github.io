@@ -37,7 +37,7 @@ export interface BaseHeadProps {
   ogImage?: string
   keywords?: string
   ogType?: 'website' | 'article'
-  jsonLd?: Record<string, unknown>
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[]
 }
 
 // ImageOptimizer component props interface

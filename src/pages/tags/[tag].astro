@@ -1,0 +1,76 @@
+---
+import { getSortedFilteredPosts } from '@/utils/draft'
+import { tagSlug } from '@/utils/seo'
+import PostList from '@/components/widgets/PostList.astro'
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import { themeConfig } from '@/config'
+
+export async function getStaticPaths() {
+  const posts = await getSortedFilteredPosts()
+  const byTag = new Map<string, { name: string; posts: typeof posts }>()
+
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      const slug = tagSlug(tag)
+      if (!byTag.has(slug)) {
+        byTag.set(slug, { name: tag, posts: [] })
+      }
+      byTag.get(slug)!.posts.push(post)
+    }
+  }
+
+  return Array.from(byTag.entries()).map(([slug, group]) => ({
+    params: { tag: slug },
+    props: { tag: group.name, posts: group.posts }
+  }))
+}
+
+const { tag, posts } = Astro.props
+---
+
+<IndexLayout
+  title={`${tag} · ${themeConfig.site.title}`}
+  description={`Posts tagged "${tag}" by ${themeConfig.site.author} — ${themeConfig.site.description}`}
+>
+  <main>
+    <h1 class="page-heading">
+      #{{ tag }} <span class="count">{posts.length}</span>
+    </h1>
+    <PostList posts={posts} meta="day" groupByMonth stagger />
+    <a class="all-tags" href="/tags/">all tags</a>
+  </main>
+</IndexLayout>
+
+<style>
+  .all-tags {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: var(--font-size-s);
+    color: var(--text-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+  }
+
+  .all-tags:hover {
+    color: var(--text-primary);
+  }
+
+  .page-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin: 0 0 2rem;
+  }
+
+  .count {
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-regular);
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

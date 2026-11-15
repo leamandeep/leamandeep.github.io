@@ -4,7 +4,8 @@ import { z } from 'astro/zod'
 
 function removeDupsAndLowerCase(array: string[]) {
 	if (!array.length) return array;
-	const lowercaseItems = array.map((str) => str.toLowerCase());
+	const trimmedItems = array.map((str) => str.trim());
+	const lowercaseItems = trimmedItems.map((str) => str.toLowerCase());
 	const distinctItems = new Set(lowercaseItems);
 	return Array.from(distinctItems);
 }
